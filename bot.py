@@ -1,12 +1,14 @@
 import os
 import logging
 from dotenv import load_dotenv
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup, ParseMode, ReplyKeyboardMarkup
 from telegram.ext import (
     Updater,
     CommandHandler,
     CallbackQueryHandler,
-    CallbackContext
+    CallbackContext,
+    MessageHandler,
+    Filters
 )
 from telegram.error import TelegramError
 import threading
@@ -24,10 +26,11 @@ load_dotenv()
 
 # Constants
 SOCIAL_MEDIA = (
-    "🧭 Наш сайт → http://prostogovorite\\.com\n"
+    "🧭 Наш сайт: http://prostogovorite\\.com\n"
     "📢 ТГ Канал: @prostogovoritech\n"
     "💬 Чат поддержки: @psysrb\n"
-    "📸 Instagram: [@prostogovorite](https://instagram\\.com/prostogovorite)\n\n"
+    "📸 Instagram: [@prostogovorite](https://instagram\\.com/prostogovorite)\n"
+    "👥 Коммьюнити психологов в Сербии: [@psysrbcom](https://t.me/psysrbcom)\n\n"
 )
 
 RESPONSES = {
@@ -44,8 +47,8 @@ RESPONSES = {
         "Ищете специалиста, который подойдёт именно вам? "
         "Наш бот поможет подобрать психолога, учитывая ваш запрос, язык общения и другие важные параметры\\. "
         "Это конфиденциально\\.\n\n"
-        "→ Начать подбор через специализированного бота: @PsyGovoritBOT\n\n"
-        "Также вы можете посмотреть каталог специалистов на нашем сайте:\n"
+        "🤖 Начать подбор через специализированного бота: → @PsyGovoritBOT\n\n"
+        "🔍 *Также вы можете посмотреть каталог специалистов на нашем сайте:*\n"
         "→ prostogovorite\\.com"
     ),
     'support_group': (
@@ -72,23 +75,21 @@ RESPONSES = {
         "• Без осуждения\n"
         "• В формате чата\n\n"
         "→ Написать в телефон доверия: @pgprobono\n\n"
-        "🤖 *Также доступен бот для анонимных сообщений:*\n"
-        "→ @anonymous\\_psysrb\\_bot\n"
-        "• Поделиться историей\n"
-        "• Задать вопрос\n"
-        "• Получить поддержку"
+        "👥 Чат поддержки: @psysrb\n"
+        "🤖 Бот для отправки анонимных сообщений в чат поддержки: [@anonymous_psysrb_bot](https://t\\.me/anonymous_psysrb_bot)"
     )
 }
 
 def get_keyboard():
     """Create the keyboard with uniform width buttons."""
-    return InlineKeyboardMarkup([
-        [InlineKeyboardButton("🤝 Получить бесплатную психологическую помощь", callback_data='help')],
-        [InlineKeyboardButton("👤 Подобрать специалиста", callback_data='find_psy')],
-        [InlineKeyboardButton("👥 Группа поддержки", callback_data='support_group')],
-        [InlineKeyboardButton("📅 Узнать про мероприятия", callback_data='announce')],
-        [InlineKeyboardButton("☎️ Телефон доверия", callback_data='hotline')],
-    ])
+    keyboard = [
+        ["🤝 Получить бесплатную психологическую помощь"],
+        ["👤 Подобрать специалиста"],
+        ["👥 Группа поддержки"],
+        ["📅 Узнать про мероприятия"],
+        ["☎️ Телефон доверия"]
+    ]
+    return ReplyKeyboardMarkup(keyboard, resize_keyboard=True)
 
 def get_welcome_message():
     """Create the welcome message with project information."""
@@ -115,7 +116,7 @@ def error_handler(update: Update, context: CallbackContext) -> None:
         logger.error(f"Error in error handler: {e}")
 
 def start(update: Update, context: CallbackContext) -> None:
-    """Send a message with inline buttons when the command /start is issued."""
+    """Send a message with keyboard when the command /start is issued."""
     try:
         update.message.reply_text(
             get_welcome_message(),
@@ -134,40 +135,46 @@ def start(update: Update, context: CallbackContext) -> None:
             "Произошла ошибка\\. Пожалуйста, попробуйте позже или обратитесь к администратору\\."
         )
 
-def button_handler(update: Update, context: CallbackContext) -> None:
+def message_handler(update: Update, context: CallbackContext) -> None:
     """Handle button presses."""
     try:
-        query = update.callback_query
-        query.answer()
-
-        # Get response for the button pressed
-        response = RESPONSES.get(query.data, "Неизвестная команда\\.")
+        text = update.message.text
+        response = None
         
-        # Send new message with social media links and response
-        full_message = f"{SOCIAL_MEDIA}{response}"
-        query.message.reply_text(
-            text=full_message,
-            reply_markup=get_keyboard(),
-            parse_mode=ParseMode.MARKDOWN_V2,
-            disable_web_page_preview=True
-        )
+        if text == "🤝 Получить бесплатную психологическую помощь":
+            response = RESPONSES['help']
+        elif text == "👤 Подобрать специалиста":
+            response = RESPONSES['find_psy']
+        elif text == "👥 Группа поддержки":
+            response = RESPONSES['support_group']
+        elif text == "📅 Узнать про мероприятия":
+            response = RESPONSES['announce']
+        elif text == "☎️ Телефон доверия":
+            response = RESPONSES['hotline']
         
-        # Log the interaction
-        logger.info(f"User {update.effective_user.id} pressed button: {query.data}")
+        if response:
+            full_message = f"{SOCIAL_MEDIA}{response}"
+            update.message.reply_text(
+                text=full_message,
+                reply_markup=get_keyboard(),
+                parse_mode=ParseMode.MARKDOWN_V2,
+                disable_web_page_preview=True
+            )
+            logger.info(f"User {update.effective_user.id} pressed button: {text}")
         
     except TelegramError as e:
-        logger.error(f"Telegram Error in button handler: {e}")
+        logger.error(f"Telegram Error in message handler: {e}")
         try:
-            query.message.reply_text(
+            update.message.reply_text(
                 "Произошла ошибка при отправке сообщения\\. Пожалуйста, используйте /start",
                 reply_markup=get_keyboard()
             )
         except:
             pass
     except Exception as e:
-        logger.error(f"Error in button handler: {e}")
+        logger.error(f"Error in message handler: {e}")
         try:
-            query.message.reply_text(
+            update.message.reply_text(
                 "Произошла ошибка\\. Пожалуйста, попробуйте позже или обратитесь к администратору\\.",
                 reply_markup=get_keyboard()
             )
@@ -190,7 +197,7 @@ def main() -> None:
 
         # Add handlers
         dispatcher.add_handler(CommandHandler("start", start))
-        dispatcher.add_handler(CallbackQueryHandler(button_handler))
+        dispatcher.add_handler(MessageHandler(Filters.text & ~Filters.command, message_handler))
         
         # Add error handler
         dispatcher.add_error_handler(error_handler)
