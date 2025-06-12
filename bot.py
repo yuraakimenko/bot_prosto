@@ -28,7 +28,8 @@ SOCIAL_MEDIA = (
     "• Сайт: prostogovorite\\.com\n"
     "• Канал: @prostogovoritech\n"
     "• Чат поддержки: @psysrb\n"
-    "• Instagram: @prostogovorite\n\n"
+    "• YouTube: [Плейлист](https://www.youtube.com/playlist?list=PLwX15bk1TAv0Se4DFOY9L31Tu8FEWdRuR&si=URNsGOFqyQOwdvJ-)\n"
+    "• Instagram: [@prostogovorite](https://instagram.com/prostogovorite)\n\n"
 )
 
 RESPONSES = {
