@@ -100,7 +100,7 @@ def get_welcome_message():
         "• Сайт: prostogovorite\\.com\n"
         "• Канал: @prostogovoritech — новости, анонсы\n"
         "• Чат поддержки: @psysrb — общение\n"
-        "• Instagram: @prostogovorite"
+        "• Instagram: [@prostogovorite](https://instagram\\.com/prostogovorite)"
     )
 
 def error_handler(update: Update, context: CallbackContext) -> None:
