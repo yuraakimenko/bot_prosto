@@ -1,8 +1,6 @@
- [build]
-   builder = "nixpacks"
-   buildCommand = "pip install -r requirements.txt"
+[build]
+builder = "nixpacks"
+buildCommand = "pip install -r requirements.txt"
 
-   [deploy]
-   startCommand = "python bot.py"
-   healthcheckPath = "/"
-   healthcheckTimeout = 100
+[deploy]
+startCommand = "python bot.py"

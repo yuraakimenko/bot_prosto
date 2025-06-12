@@ -9,6 +9,8 @@ from telegram.ext import (
     CallbackContext
 )
 from telegram.error import TelegramError
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 
 # Configure logging
 logging.basicConfig(
@@ -206,6 +208,22 @@ def main() -> None:
     except Exception as e:
         logger.error(f"Failed to start bot: {e}")
         raise
+
+class HealthHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        if self.path == '/':
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b'OK')
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+def run_health_server():
+    server = HTTPServer(('0.0.0.0', 8080), HealthHandler)
+    server.serve_forever()
+
+threading.Thread(target=run_health_server, daemon=True).start()
 
 if __name__ == '__main__':
     main() 
