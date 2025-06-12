@@ -24,12 +24,10 @@ load_dotenv()
 
 # Constants
 SOCIAL_MEDIA = (
-    "*Наши ресурсы:*\n"
-    "• Сайт: prostogovorite\\.com\n"
-    "• Канал: @prostogovoritech\n"
-    "• Чат поддержки: @psysrb\n"
-    "• YouTube: [Плейлист](https://www.youtube.com/playlist?list=PLwX15bk1TAv0Se4DFOY9L31Tu8FEWdRuR&si=URNsGOFqyQOwdvJ-)\n"
-    "• Instagram: [@prostogovorite](https://instagram.com/prostogovorite)\n\n"
+    "🧭 Наш сайт → http://prostogovorite.com\n"
+    "📢 ТГ Канал: @prostogovoritech\n"
+    "💬 Чат поддержки: @psysrb\n"
+    "📸 Instagram: @prostogovorite\n\n"
 )
 
 RESPONSES = {
@@ -60,14 +58,15 @@ RESPONSES = {
     ),
     'announce': (
         "*Мероприятия и события*\n\n"
-        "• *Онлайн\\-события и воркшопы*\n"
+        "• *Онлайн-события и воркшопы*\n"
         "Тематические мероприятия для саморазвития и общения\n"
         "→ Следите за анонсами: @prostogovoritech\n\n"
         "• *Вебинары*\n"
-        "Записи доступны на нашем YouTube канале\n\n"
+        "Записи доступны на нашем YouTube канале\n"
+        "📺 [YouTube плейлист](https://www.youtube.com/playlist?list=PLwX15bk1TAv0Se4DFOY9L31Tu8FEWdRuR&si=URNsGOFqyQOwdvJ-)\n\n"
         "Подписывайтесь на наши ресурсы:\n"
-        "• Канал «Просто говорить»: @prostogovoritech\n"
-        "• Instagram: @prostogovorite"
+        "• ТГ Канал: @prostogovoritech\n"
+        "• 📸 Instagram: [@prostogovorite](https://instagram.com/prostogovorite)"
     ),
     'hotline': (
         "*Телефон доверия*\n\n"
