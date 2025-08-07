@@ -242,28 +242,30 @@ def main() -> None:
         logger.info("Bot started successfully")
         updater.start_polling()
 
-        # Run the bot until you press Ctrl-C
-        updater.idle()
+        # I suspect the following function of responding with online casino messages.
+        # Anyway, it's excessive because the above start_polling already start the app until it's terminated.
+        #updater.idle()
 
     except Exception as e:
         logger.error(f"Failed to start bot: {e}")
         raise
 
-class HealthHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/':
-            self.send_response(200)
-            self.end_headers()
-            self.wfile.write(b'OK')
-        else:
-            self.send_response(404)
-            self.end_headers()
+#class HealthHandler(BaseHTTPRequestHandler):
+#    def do_GET(self):
+#        if self.path == '/':
+#            self.send_response(200)
+#            self.end_headers()
+#            self.wfile.write(b'OK')
+#        else:
+#            self.send_response(404)
+#            self.end_headers()
 
-def run_health_server():
-    server = HTTPServer(('0.0.0.0', 8080), HealthHandler)
-    server.serve_forever()
+#def run_health_server():
+#    server = HTTPServer(('0.0.0.0', 8080), HealthHandler)
+#    server.serve_forever()
 
-threading.Thread(target=run_health_server, daemon=True).start()
+# No need to run additional healthchecks - Telegram's Updater run them automatically
+#threading.Thread(target=run_health_server, daemon=True).start()
 
 if __name__ == '__main__':
     main() 
